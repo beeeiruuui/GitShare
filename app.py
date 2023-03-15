@@ -32,12 +32,7 @@ app.config['MYSQL_PASSWORD'] = 'Pa$$w0rd'
 app.config['MYSQL_DB'] = 'pythonlogin'
 mysql = MySQL(app)
 
-def is_Human(captcha_response):
-    cap_secret = "6Lc9JPYgAAAAAKwXOSxVBPMlh1FSq3HvMrE0K-gt"
-    cap_data = {"response":captcha_response,"secret":cap_secret}
-    response = requests.post("https://www.google.com/recaptcha/api/siteverify", cap_data)
-    response_text = json.loads(response.text)
-    return response_text['success']
+
 
 #@app.route('/')
 @app.route("/index")
@@ -67,7 +62,7 @@ def display():
 # Starting page which will be displayed to user when app is started
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    ph = PasswordHasher()
+    #ph = PasswordHasher()
     # Message to be displayed
     msg = ''
     sitekey = "6Lc9JPYgAAAAAMxcrs-LwhfRXbK-yKNhh8ae-VTu"
@@ -77,7 +72,6 @@ def login():
         password = request.form['password']
 
         #account = database.getUser(username, password)
-        captcha_response = request.form["g-recaptcha-response"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM accounts WHERE username = %s', (username,))
@@ -87,18 +81,17 @@ def login():
 
         # start session  If account exist otherwise display the message
         try:
-            if ph.verify(account['password'], password):
-                if is_Human(captcha_response):
-                    session['loggedin'] = True
-                    session['username'] = account['username']
-                    msg = 'Logged in successfully !'
-                    return render_template('index.html', msg=msg)
+            if account['password'] == password:
+                session['loggedin'] = True
+                session['username'] = account['username']
+                msg = 'Logged in successfully !'
+                return render_template('index.html', msg=msg)
 
-                if not is_Human(captcha_response):
-                    session['loggedin'] = True
-                    session['username'] = account['username']
-                    msg = 'Please do the Captcha!'
-                    return render_template('login.html', msg=msg, siteky=sitekey)
+            if account['password'] != password:
+                session['loggedin'] = False
+                session['username'] = account['username']
+                msg = 'Please re password!'
+                return render_template('login.html', msg=msg, siteky=sitekey)
         except:
             cursor.execute('SELECT * FROM accounts WHERE username = %s', (username,))
             # Fetch one record and return result
@@ -172,24 +165,6 @@ def register():
         msg = 'Please fill out the form !'
     return render_template('register.html', msg=msg)
 
-@app.route('/forgetpass', methods=['POST'])
-def forgetpass():
-    msg = ''
-    ph=PasswordHasher()
-    if 'loggedin' in session:
-        if request.method == 'POST' and 'password' in request.form:
-            password = ph.hash(request.form['password'])
-            username = session['username']
-            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute("Update accounts set password = %s where username = %s",(password,username))
-            mysql.connection.commit()
-            msg = 'You have successfully updated !'
-            return render_template("login.html")
-        elif request.method == 'POST':
-            msg = 'Please fill out the form !'
-        return render_template("forgetpass.html", msg=msg)
-    return redirect(url_for('otpP1'))
-
 @app.route("/update", methods=['GET', 'POST'])
 def update():
     msg = ''
@@ -207,68 +182,6 @@ def update():
             msg = 'Please fill out the form !'
         return render_template("update.html", msg=msg)
     return redirect(url_for('login'))
-
-
-@app.route("/otpP1", methods=[ 'GET','POST'])
-def otpP1():
-    msg = ''
-    ph=PasswordHasher()
-    if request.method == 'POST' and 'username' in request.form:
-        username = request.form['username']
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('SELECT * FROM accounts WHERE username = "%s"', (username))
-        account = cursor.fetchone()
-
-
-        # start session  If account exist otherwise display the message
-
-        if account:
-            session['loggedin'] = True
-            session['username'] = account['username']
-            return render_template('otpP2.html', msg=msg)
-
-    return render_template("otpP1.html", msg=msg)
-
-@app.route('/otpP2', methods=['GET','POST'])
-def otpP2():
-    if 'loggedin' in session:
-        otpno = random.randint(1000,9999)
-        #email
-        email_sender = 'beeeiruuui@gmail.com'
-        email_password = 'waqmjwtqhowxsjty'
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("select * from accounts where username ='%s'" % session['username'])
-
-        cf = cursor.fetchone()
-
-        email_receiver = '%s', cf['email']
-        print(email_receiver)
-        #print(cursor.execute("select `email` from `accounts` where `username` = '%s'; " % username))
-        subject = 'OTP Number'
-        body = """
-        Your OTP Number is: %s
-        If this Email was not meant for you, Please Ignore This Email
-        """ % otpno
-        em = EmailMessage()
-        em['From'] = email_sender
-        em['To'] = email_receiver
-        em['Subject'] = subject
-        em.set_content(body)
-
-        context = ssl.create_default_context()
-
-        # Log in and send the email
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
-            smtp.login(email_sender, email_password)
-            smtp.sendmail(email_sender, email_receiver, em.as_string())
-        if request.method == 'POST' and 'otp' in request.form:
-            otp = request.form['otp']
-            if otp == otpno:
-                return render_template('forgetpass.html')
-            else:
-                return render_template('otpP2.html')
-        return render_template('otpP2.html')
-    return redirect(url_for('otpP1'))
 
 if __name__ == '__main__':
     app.run()

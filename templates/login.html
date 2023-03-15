@@ -16,15 +16,13 @@
 			<form action="{{ url_for('login')}}" method="post" autocomplete="off">
 			<div class="msg">{{ msg }}</div>
 			<input type="text" name="username" placeholder="Enter Your Username" class="textbox" id="username" required></br></br>
-			<input type="password" name="password" placeholder="Enter Your Password" class="textbox" id="password" required></br></br></br>
+			<input type="text" name="password" placeholder="Enter Your Password" class="textbox" id="password" required></br></br></br>
 				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-			<div class="g-recaptcha" data-sitekey="6Lc9JPYgAAAAAMxcrs-LwhfRXbK-yKNhh8ae-VTu"></div><br>
 
 			<input type="submit" class="btn" value="Login">
 			</form></br></br>
 
 			<p class="worddark">New to this page? <a class="worddark" href="{{ url_for('register')}}">Register here</a></p>
-			<p class="worddark">Forgot Your Password?<a class="worddark" href="{{ url_for('otpP1')}}">Forget Password</a></p>
 			</div>
 		</div>
 	</body>

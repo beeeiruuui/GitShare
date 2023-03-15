@@ -52,9 +52,7 @@ def display():
         username = request.form['username']
         password = request.form['password']
         email = request.form['email']
-        country = request.form['country']
-        gender = request.form['gender']
-        cursor = cursor.execute('select * from accounts where username = %s and password = %s and email = %s and country = %s and gender = %s', (username, password, email, country, gender))
+        cursor = cursor.execute('select * from accounts where username = %s and password = %s and email = %s', (username, password, email))
         mysql.connection.commit()
         return render_template("display.html", cursor=cursor)
     return redirect(url_for('login'))
@@ -97,18 +95,13 @@ def login():
             # Fetch one record and return result
             account = cursor.fetchone()
             flash("Please do the CAPTCHA")
-            print(account['logincount'])
-            newaccountlogincount=account['logincount']+1
+
+
             cursor.execute('UPDATE accounts set logincount = %s where id = %s;', (newaccountlogincount,account['id']))
             #cursor.execute(account['logincount']=newaccountlogincount)
             mysql.connection.commit()
-            print(newaccountlogincount)
-            if newaccountlogincount == 3:
-                print("YEY")
-                time.sleep(10)
-                msg = 'timeout 30 secs'
-                cursor.execute('UPDATE accounts set logincount = %s where id = %s;', (0,account['id']))
-                mysql.connection.commit()
+
+
             msg = 'Incorrect username or Password'
 
     return render_template('login.html', msg=msg, siteky=sitekey)
@@ -125,18 +118,14 @@ def logout():
 # Function to use for Registring the element
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    ph = PasswordHasher()
     handStor=[]
     logincount='0'
     msg = ''
     # Check if the call is post and fields are not empty
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form and 'country' in request.form and 'gender' in request.form:
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
         username = request.form['username']
-        password = ph.hash(request.form['password'])
+        password = request.form['password']
         email = request.form['email']
-        phoneNO = request.form['phoneNO']
-        country = request.form['country']
-        gender = request.form['gender']
         print("hi")
 
         # Check if user with that username already exist
@@ -154,10 +143,9 @@ def register():
         else:
             #database.AddUser(User(username, password, gender, email, country))
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            print(handStor)
             #authyid = user.id
             authyid=0
-            cursor.execute("insert into `accounts` (`id`, `username`, `password`, `email`, `country`, `gender`, `phoneNO`, `logincount`) values (NULL, %s, %s, %s, %s, %s, %s, %s);" , (username, password, email, country, gender, phoneNO, logincount))
+            cursor.execute("insert into `accounts` (`id`, `username`, `password`, `email`) values (NULL, %s, %s, %s);", (username, password, email))
             mysql.connection.commit()
             msg = 'You have successfully registered!'
             #msg = 'You have successfully registered !'

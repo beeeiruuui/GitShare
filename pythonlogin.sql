@@ -5,12 +5,8 @@ CREATE TABLE IF NOT EXISTS `accounts` (
 `username` varchar(50) NOT NULL,
 `password` varchar(255) NOT NULL,
 `email` varchar(100) NOT NULL,
-`country` VARCHAR(50) NOT NULL,
-`gender` varchar(100) NOT NULL,
-`phoneNO` varchar(20) NOT NULL,
-`logincount` int1(11) NOT NULL,
 PRIMARY KEY (`id`),
 UNIQUE (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-INSERT INTO `accounts` (`id`, `username`, `password`, `email`, `country`, `gender`, `phoneNO`, `logincount`) VALUES (1, 'test', 'test', 'mingwenaw@gmail.com', 'test', 'test', '97527889', 0);
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
+INSERT INTO `accounts` (`id`, `username`, `password`) VALUES (0, 'test', 'test', 'mingwenaw@gmail.com');
 select * from accounts;

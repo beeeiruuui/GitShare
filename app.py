@@ -18,7 +18,7 @@ import random
 import smtplib, ssl
 from email.message import EmailMessage
 from argon2 import PasswordHasher
-from OpenSSL import SSL
+
 
 # global Vars
 app = Flask(__name__)

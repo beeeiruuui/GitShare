@@ -18,6 +18,7 @@ import random
 import smtplib, ssl
 from email.message import EmailMessage
 from argon2 import PasswordHasher
+from OpenSSL import SSL
 
 # global Vars
 app = Flask(__name__)
@@ -174,3 +175,4 @@ def update():
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
     #database.CloseDatabase(debug=True)
+

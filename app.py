@@ -3,7 +3,7 @@ import flask_login
 import sms as sms
 from flask_mysqldb import MySQL
 import flask
-from flask import Flask, render_template, request, redirect, url_for, session, flash, app
+from flask import Flask, render_template, request, redirect, url_for, session, flash, app, jsonify
 import re, requests
 import MySQLdb.cursors
 from database import Database
@@ -18,6 +18,8 @@ import random
 import smtplib, ssl
 from email.message import EmailMessage
 from argon2 import PasswordHasher
+import OpenSSL
+import certifi
 
 
 # global Vars
@@ -173,6 +175,8 @@ def update():
     return redirect(url_for('login'))
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80)
+    app.run(host='0.0.0.0', port=80, ssl_context=())
     #database.CloseDatabase(debug=True)
+
+
 

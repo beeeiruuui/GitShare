@@ -1,10 +1,8 @@
 pip==23.0.1
 setuptools==67.6.0
 Flask==2.2.3
-PyConfigParser==1.0.5
 Flask-Argon2==0.3.0.0
 Flask-Login==0.6.2
-MySQL-python==1.2.5
 Flask-MySQLdb==1.0.1
 mysqlclient==2.1.1
 Flask-WTF==1.1.1

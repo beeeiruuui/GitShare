@@ -4,7 +4,7 @@ Flask==2.2.3
 Flask-Argon2==0.3.0.0
 Flask_Login
 Flask_MySQLdb
-mysqlclient==2.1.1
+mysqlclient
 Flask_WTF
 Jinja2==3.1.2
 MarkupSafe==2.1.2

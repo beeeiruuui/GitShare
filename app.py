@@ -29,7 +29,7 @@ csrf.init_app(app)
 #database = Database()
 app.secret_key = "ming"
 #app.config['SECRET_KEY'] = "ming"
-app.config['MYSQL_HOST'] = 'awsdatabase.cr1vhehorrch.ap-southeast-2.rds.amazonaws.com'
+app.config['MYSQL_HOST'] = 'awsdatabase.crwzmou2lpyy.ap-southeast-1.rds.amazonaws.com'
 app.config['MYSQL_USER'] = 'admin' #change to root
 app.config['MYSQL_PASSWORD'] = 'Pa$$w0rd' #change to Pa$$w0rd
 app.config['MYSQL_DB'] = 'pythonlogin'
